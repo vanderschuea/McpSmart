@@ -3,6 +3,12 @@ package be.ucl.info.ingi1122.highlight.tools;
 public class Tools {
 
 	public static Portion[] quoiSurligner(char[] texte, char[][] mots) {
+		if(mots==null||mots.length==0){// TODO: write better
+			if(texte==null || texte.length==0) return null;
+			else return null;
+		}
+		if(texte==null || texte.length==0) return null;
+		
 		MyPortionSet pset = new MyPortionSet(texte.length);
 		for(int i=0;i<texte.length;i++){
 			for(int j=0;j<mots.length;j++){
@@ -16,6 +22,12 @@ public class Tools {
 	}
 	
 	public static boolean correspond(char[] texte, char[][] mots) {
+		if(mots==null||mots.length==0){
+			if(texte==null || texte.length==0) return true;
+			else return false;
+		}
+		if(texte==null || texte.length==0) return false;
+		
 		boolean [] tested = new boolean[mots.length];
 		int count=0;
 		for(int i=0;i<texte.length && count<mots.length;i++){

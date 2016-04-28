@@ -13,7 +13,7 @@ public class MyPortionSet {
 	
 	// TODO: private?public
 	public void add(int start, int end){
-		System.out.println(Arrays.toString(highlightTable)+","+nPortions);
+		//System.out.println(Arrays.toString(highlightTable)+","+nPortions);
 		// Check si on lie avec une autre portion au debut et puis fin
 		if(start==0 || (start>0 && !highlightTable[start-1])){
 			nPortions++;
@@ -30,7 +30,7 @@ public class MyPortionSet {
 			}
 			highlightTable[i]=true;
 		}
-		System.out.println(Arrays.toString(highlightTable)+","+nPortions);
+		//System.out.println(Arrays.toString(highlightTable)+","+nPortions);
 	}
 	public Portion[] getPortions(){
 		if(nPortions<=0) return null;
