@@ -3,13 +3,36 @@ package be.ucl.info.ingi1122.highlight.tools;
 public class Tools {
 
 	public static Portion[] quoiSurligner(char[] texte, char[][] mots) {
-		
-		return new Portion[0];
+		MyPortionSet pset = new MyPortionSet(texte.length);
+		for(int i=0;i<texte.length;i++){
+			for(int j=0;j<mots.length;j++){
+				int minimum = min(i+mots[j].length,texte.length);
+				if(compareWords(texte,i,minimum,mots[j])==0){
+					pset.add(i, minimum);
+				}
+			}
+		}
+		return pset.getPortions();
 	}
 	
 	public static boolean correspond(char[] texte, char[][] mots) {
-		
-		return true;
+		boolean [] tested = new boolean[mots.length];
+		int count=0;
+		for(int i=0;i<texte.length && count<mots.length;i++){
+			for(int j=0;j<mots.length && count<mots.length;j++){
+				if(!tested[j]){
+					if(compareWords(texte,i,min(i+mots[j].length,texte.length),mots[j])==0){
+						tested[j]=true;
+						count++;
+					}
+				}
+			}
+		}
+		return count==mots.length;
+	}
+	public static int min(int a, int b){
+		if(a<b) return a;
+		else  	return b;
 	}
 	
 	/*
@@ -59,14 +82,14 @@ public class Tools {
 		return w1.length-w2.length;
 	}
 	
-	private static int compareWords(char[] w1, int start, char[] w2){
-		final int min = (w1.length-start<w2.length)? w1.length-start: w2.length;
+	private static int compareWords(char[] w1, int start, int end, char[] w2){
+		final int min = (end-start<w2.length)? end-start: w2.length;
 		for(int i=0;i<min;i++){
 			int dw = w1[start+i]-w2[i];
 			if(dw!=0) return dw;
 		}
 		
-		return (w1.length-start)-w2.length;
+		return (end-start)-w2.length;
 	}
 	
 	private static void swap(int i, int j, char[][] mots){

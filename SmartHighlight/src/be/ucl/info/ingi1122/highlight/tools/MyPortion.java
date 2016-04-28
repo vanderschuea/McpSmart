@@ -12,4 +12,7 @@ public class MyPortion implements Portion{
 	public int getEnd(){
 		return fin;
 	}
+	public String toString(){
+		return debut+","+fin;
+	}
 }
