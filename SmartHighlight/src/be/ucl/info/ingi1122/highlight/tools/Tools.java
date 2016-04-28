@@ -59,6 +59,16 @@ public class Tools {
 		return w1.length-w2.length;
 	}
 	
+	private static int compareWords(char[] w1, int start, char[] w2){
+		final int min = (w1.length-start<w2.length)? w1.length-start: w2.length;
+		for(int i=0;i<min;i++){
+			int dw = w1[start+i]-w2[i];
+			if(dw!=0) return dw;
+		}
+		
+		return (w1.length-start)-w2.length;
+	}
+	
 	private static void swap(int i, int j, char[][] mots){
 		char[] save = mots[i];
 		mots[i] = mots[j];
