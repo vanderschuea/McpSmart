@@ -69,7 +69,7 @@ public class Tools {
 	private static boolean equalWords(final char[] w1, final int start, final int end, final char[] w2){
 		final int w1length = end-start;
 		final int w2length = w2.length;
-		final int min = (end-start<w2.length)? end-start: w2.length;
+		final int min = min(w1length,w2length);
 		for(int i=0;i<min;i++){
 			int dw = w1[start+i]-w2[i];
 			if(dw!=0) return false;
