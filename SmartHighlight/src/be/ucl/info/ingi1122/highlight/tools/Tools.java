@@ -1,27 +1,8 @@
 package be.ucl.info.ingi1122.highlight.tools;
 
 public class Tools {
-
-	public static Portion[] quoiSurligner(char[] texte, char[][] mots) {
-		if(mots==null||mots.length==0){// TODO: write better
-			if(texte==null || texte.length==0) return null;
-			else return null;
-		}
-		if(texte==null || texte.length==0) return null;
-		
-		MyPortionSet pset = new MyPortionSet(texte.length);
-		for(int i=0;i<texte.length;i++){
-			for(int j=0;j<mots.length;j++){
-				int minimum = min(i+mots[j].length,texte.length);
-				if(compareWords(texte,i,minimum,mots[j])==0){
-					pset.add(i, minimum);
-				}
-			}
-		}
-		return pset.getPortions();
-	}
 	
-	public static boolean correspond(char[] texte, char[][] mots) {
+	public static boolean correspond(final char[] texte, char[][] mots) {
 		if(mots==null||mots.length==0){
 			if(texte==null || texte.length==0) return true;
 			else return false;
@@ -33,7 +14,7 @@ public class Tools {
 		for(int i=0;i<texte.length && count<mots.length;i++){
 			for(int j=0;j<mots.length && count<mots.length;j++){
 				if(!tested[j]){
-					if(compareWords(texte,i,min(i+mots[j].length,texte.length),mots[j])==0){
+					if(equalWords(texte,i,min(i+mots[j].length,texte.length),mots[j])){
 						tested[j]=true;
 						count++;
 					}
@@ -42,10 +23,57 @@ public class Tools {
 		}
 		return count==mots.length;
 	}
-	public static int min(int a, int b){
+	
+	public static Portion[] quoiSurligner(final char[] texte, char[][] mots) {
+		if(mots==null||mots.length==0||texte==null || texte.length==0){
+			return null;
+		}
+		
+		MyPortionSet pset = new MyPortionSet(texte.length);
+		for(int i=0;i<texte.length;i++){
+			chercheTexte(pset,texte,i,mots);
+		}
+		return pset.getPortions();
+	}
+	
+	/**
+	 * @pre: pset!=null, texte!=null, start>0 && start<texte.length && mots!=null && mots.length!=0 && texte.length==pset.getSize()
+	 * @post: voir papier
+	 */
+	public static void chercheTexte(MyPortionSet pset, final char[] texte, final int start, char[][]mots){
+		for(int j=0;j<mots.length;j++){
+			int end = start+mots[j].length;
+			if(end<=texte.length){
+				if(equalWords(texte,start,end,mots[j])){
+					pset.add(start, end);
+				}
+			}
+		}
+	}
+	
+	
+	
+	// Returns the minimum between 2 integers
+	public static int min(final int a, final int b){
 		if(a<b) return a;
 		else  	return b;
 	}
+	
+	// return >0 si w2->w1
+	private static boolean equalWords(final char[] w1, final int start, final int end, final char[] w2){
+		final int w1length = end-start;
+		final int w2length = w2.length;
+		final int min = (end-start<w2.length)? end-start: w2.length;
+		for(int i=0;i<min;i++){
+			int dw = w1[start+i]-w2[i];
+			if(dw!=0) return false;
+		}
+		
+		return w1length==w2length;
+	}
+
+	
+	//--------------------------------------
 	
 	/*
 	 * SORTING ALGORITHM
@@ -82,7 +110,11 @@ public class Tools {
 			getMax(mots,max,end);
 		}
 	}
-
+	private static void swap(int i, int j, char[][] mots){
+		char[] save = mots[i];
+		mots[i] = mots[j];
+		mots[j] = save;
+	}
 	// return >0 si w2->w1
 	private static int compareWords(char[] w1, char[] w2){
 		final int min = (w1.length<w2.length)? w1.length: w2.length;
@@ -93,23 +125,4 @@ public class Tools {
 		
 		return w1.length-w2.length;
 	}
-	
-	private static int compareWords(char[] w1, int start, int end, char[] w2){
-		final int min = (end-start<w2.length)? end-start: w2.length;
-		for(int i=0;i<min;i++){
-			int dw = w1[start+i]-w2[i];
-			if(dw!=0) return dw;
-		}
-		
-		return (end-start)-w2.length;
-	}
-	
-	private static void swap(int i, int j, char[][] mots){
-		char[] save = mots[i];
-		mots[i] = mots[j];
-		mots[j] = save;
-	}
-	
-	//--------------------------------------
-	
 }

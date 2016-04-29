@@ -50,4 +50,21 @@ public class MyPortionSet {
 		}
 		return ports;
 	}
+	
+	/**
+	 * @pre:  start & end satisfy the portion-conditions
+	 * @post: returns true if this portions is saved as to be highlighted
+	 */
+	public boolean contains(int start, int end){
+		boolean contains=true;
+		for(int i=start;i<end && contains;i++){
+			contains=highlightTable[i];
+		}
+		return contains;
+	}
+	/**
+	 * @pre:/
+	 * @post: returns the length of highlightTable
+	 */
+	public int getSize(){ return highlightTable.length; }
 }
