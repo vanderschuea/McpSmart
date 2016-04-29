@@ -59,6 +59,12 @@ public class Tools {
 		else  	return b;
 	}
 	
+	// Returns the maximum between 2 integers
+	public static int max(final int a, final int b){
+		if(a>b) return a;
+		else  	return b;
+	}
+	
 	// return >0 si w2->w1
 	private static boolean equalWords(final char[] w1, final int start, final int end, final char[] w2){
 		final int w1length = end-start;

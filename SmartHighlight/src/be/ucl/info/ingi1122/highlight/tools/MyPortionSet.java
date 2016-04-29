@@ -14,24 +14,30 @@ public class MyPortionSet {
 	// TODO: private?public
 	public void add(int start, int end){
 		//System.out.println(Arrays.toString(highlightTable)+","+nPortions);
-		// Check si on lie avec une autre portion au debut et puis fin
-		if(start==0 || (start>0 && !highlightTable[start-1])){
-			nPortions++;
-		}
-		if(end<highlightTable.length && highlightTable[end]){
-			nPortions--;
-		}
-		boolean changed = !highlightTable[start]; 
+		
+		int checkStart = Tools.max(0,start-1);
+		int checkEnd   = Tools.min(highlightTable.length, end+1); 
+		nPortions = 1-getNumberPortions(checkStart,checkEnd);
 		for(int i=start;i<end;i++){
-			if(!changed && !highlightTable[i]) changed=true;
-			if(changed && highlightTable[i]){
-				nPortions--;
-				changed=false;
-			}
 			highlightTable[i]=true;
 		}
 		//System.out.println(Arrays.toString(highlightTable)+","+nPortions);
 	}
+	
+	/**
+	 * 
+	 * @pre: start & end are defined like a portion
+	 * @post: returns the number of portion within this interval (>=0)
+	 */
+	private int getNumberPortions(int start, int end){
+		int n=0;
+		if(highlightTable[start]) n++;
+		for(int i=start+1;i<start;i++){
+			if(highlightTable[i] && highlightTable[i-1]) n++;
+		}
+		return n;
+	}
+	
 	public Portion[] getPortions(){
 		if(nPortions<=0) return null;
 		// TODO: verifier creation de tableau en java
