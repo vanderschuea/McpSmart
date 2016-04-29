@@ -11,13 +11,12 @@ public class MyPortionSet {
 		nPortions=0;
 	}
 	
-	// TODO: private?public
 	public void add(int start, int end){
 		//System.out.println(Arrays.toString(highlightTable)+","+nPortions);
 		
 		int checkStart = Tools.max(0,start-1);
 		int checkEnd   = Tools.min(highlightTable.length, end+1); 
-		nPortions = 1-getNumberPortions(checkStart,checkEnd);
+		nPortions += 1-getNumberPortions(checkStart,checkEnd);
 		for(int i=start;i<end;i++){
 			highlightTable[i]=true;
 		}
@@ -32,8 +31,8 @@ public class MyPortionSet {
 	private int getNumberPortions(int start, int end){
 		int n=0;
 		if(highlightTable[start]) n++;
-		for(int i=start+1;i<start;i++){
-			if(highlightTable[i] && highlightTable[i-1]) n++;
+		for(int i=start+1;i<end;i++){
+			if(highlightTable[i] && !highlightTable[i-1]) n++;
 		}
 		return n;
 	}
