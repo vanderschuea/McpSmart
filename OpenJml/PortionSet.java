@@ -23,9 +23,9 @@ public class PortionSet {
 	 *					CONSTRUCTOR
 	 * ////////////////////////////////////////////////////
 	 */
-	//@ modifies positions, size, capacity
-	//@ requires max>0 && max<Integer.MAX_VALUE/2
-	//@ ensures size==0 && positions.length==max*2 && capacity==max
+	//@ requires max>0 && max<Integer.MAX_VALUE/2;
+	//@ ensures size==0 && positions.length==max*2 && capacity==max;
+	//@ modifies positions, size, capacity;
 	public PortionSet(int max) {
 		positions = new int[max*2];
 		capacity = max;
@@ -39,26 +39,38 @@ public class PortionSet {
 	 *					PUBLIC METHODS
 	 * ////////////////////////////////////////////////////
 	 */
+	//@ requires n>=0 && n<Integer.MAX_VALUE;
+	//@ requires size*2 <= positions.length;
+	/*@ ensures \result <==>
+	  @			(\exists int I; I>=0 && I<size; begin(I) <= n && n < end(I)); */
+	//@ pure;
 	public boolean contains(int n) {
 		boolean result = false;
-		for (int i = 0; !result && i < size; i++) {
+		int i=0;
+		//@ loop_invariant i>=0 && i<=size;
+		/*@ loop_invariant !(result) <==>
+		  @ 		(\forall int I; I>=0 && I<i; !(begin(I) <= n && n < end(I)));*/
+		//@ decreases size-i;
+		while (!result && i < size) {
 			if (begin(i) <= n && n < end(i)) {
 				result = true;
 				break;
 			}
+			i=i+1;
 		}
 		return result;
 	}
+
 	// 		Conditions on the arguments
-	//@ requires begin>=0 && begin<end && end<=Integer.MAX_VALUE
+	//@ requires begin>=0 && begin<end && end<=Integer.MAX_VALUE;
 	// 		Conditions on the state of class variables/invariants
-	// TODO: @ requires size<capacity
+	// TODO: @ requires size<capacity;
 	public void add(int begin, int end) {
 		if (size == 0) {
 			addInterval(begin, end);
 		} else {
 			if (begin <= end(size-1) && begin(size-1) <= end){
-                //@ assert begin <= end(size-1) && begin(size-1) <= end; // OpenJML en aura besoin...
+                //  @ assert begin <= end(size-1) && begin(size-1) <= end; // OpenJML en aura besoin...
 				updateLastInterval(begin, end);
 			} else {
 				addInterval(begin, end);
@@ -104,7 +116,7 @@ public class PortionSet {
 	  @   ensures \result == positions[i*2];
 	  @   modifies \nothing;
 	  @ pure helper */
-	public int begin(int i) {
+	public int begin(final int i) {
 		return positions[i*2];
 	}
 
@@ -114,7 +126,7 @@ public class PortionSet {
 	  @   ensures \result == positions[i*2+1];
 	  @   modifies \nothing;
 	  @ pure helper */
-	public int end(int i) {
+	public int end(final int i) {
 		return positions[i*2+1];
 	}
 }
