@@ -7,7 +7,6 @@ public class Main {
 		char[][] mots = toArr(arr);
 		print(mots);
 		System.out.println("--------------------------");
-		Tools.tri(mots);
 		print(mots);
 	}
 	
