@@ -1,16 +1,44 @@
 
 public class PortionSet {
 
-	private int[] positions;
-	private int size;
-	private final int capacity;
+	/**
+	 * ////////////////////////////////////////////////////
+	 *					CLASS FIELDS
+	 * ////////////////////////////////////////////////////
+	 */
+	private /*@spec_public@*/ int[] positions;
+	private /*@spec_public@*/ int size;
+	private final /*@spec_public@*/ int capacity;
 
+
+	/**
+	 * ////////////////////////////////////////////////////
+	 *					CLASS INVARIANTS
+	 * ////////////////////////////////////////////////////
+	 */
+	// TODO
+
+	/**
+	 * ////////////////////////////////////////////////////
+	 *					CONSTRUCTOR
+	 * ////////////////////////////////////////////////////
+	 */
+	//@ modifies positions, size, capacity
+	//@ requires max>0 && max<Integer.MAX_VALUE/2
+	//@ ensures size==0 && positions.length==max*2 && capacity==max
 	public PortionSet(int max) {
 		positions = new int[max*2];
 		capacity = max;
 		size = 0;
+		// TODO: set class invariants too
 	}
 
+
+	/**
+	 * ////////////////////////////////////////////////////
+	 *					PUBLIC METHODS
+	 * ////////////////////////////////////////////////////
+	 */
 	public boolean contains(int n) {
 		boolean result = false;
 		for (int i = 0; !result && i < size; i++) {
@@ -21,8 +49,10 @@ public class PortionSet {
 		}
 		return result;
 	}
-
-	// @ requires : begin>=0 && begin<end && end<=capacity
+	// 		Conditions on the arguments
+	//@ requires begin>=0 && begin<end && end<=Integer.MAX_VALUE
+	// 		Conditions on the state of class variables/invariants
+	// TODO: @ requires size<capacity
 	public void add(int begin, int end) {
 		if (size == 0) {
 			addInterval(begin, end);
@@ -36,6 +66,12 @@ public class PortionSet {
 		}
 	}
 
+	/**
+	 * ////////////////////////////////////////////////////
+	 *					PRIVATE METHODS
+	 * ////////////////////////////////////////////////////
+	 */
+
 	private void addInterval(int begin, int end) {
 		positions[size*2] = begin;
 		positions[size*2+1] = end;
@@ -45,6 +81,14 @@ public class PortionSet {
 	private void updateLastInterval(int begin, int end) {
 		positions[(size-1)*2+1] = end >= end(size-1) ? end : end(size-1);
 	}
+
+
+
+	/**
+	 * ////////////////////////////////////////////////////
+	 *					GIVEN PROOFS
+	 * ////////////////////////////////////////////////////
+	 */
 
     // Une méthode annotée "helper" ne doit pas garantir les invariants de classe (post).
     // En contrepartie, ils ne sont pas non plus garantis lors de l'appel (pre).
