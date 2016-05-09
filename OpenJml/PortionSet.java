@@ -16,8 +16,9 @@ public class PortionSet {
 	 *					CLASS INVARIANTS
 	 * ////////////////////////////////////////////////////
 	 */
-	//@ public invariant size>=0;
-	//@ public invariant capacity>=0;
+	//@ public invariant size>=0 && size<=capacity;
+	//@ public invariant capacity>=0 && 2*capacity==positions.length;
+	//@ public invariant (\forall int i; i>=0 && i<2*size-1; positions[i]<positions[i+1]);
 
 	/**
 	 * ////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ public class PortionSet {
 	}
 
 	// 		Conditions on the arguments
-	//@ requires begin>=0 && begin<end && end<=Integer.MAX_VALUE;
+	//@ requires (size==0) || (size!=0 && begin>=begin(size-1) && begin<end && end<=Integer.MAX_VALUE);
 	// 		Conditions on the state of class variables/invariants
 	// TODO: @ requires size<capacity;
 	public void add(int begin, int end) {
@@ -94,9 +95,21 @@ public class PortionSet {
 		positions[size*2+1] = end;
 		size++;
 	}
-
+	
+	//@ requires size>0 && size<=capacity;
+	//@ requires begin(size-1)<=begin && begin<=end(size-1) && begin(size-1)<end;
+	/*@ ensures  end>=end(size-1)<==>positions[(size-1)*2+1]==end &&
+				 end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1) && 
+				 (positions[(size-1)*2+1]==end(size-1) || 
+				  	positions[(size-1)*2+1]==end);*/
+	//@ modifies positions[(size-1)*2+1];
 	private void updateLastInterval(int begin, int end) {
-		positions[(size-1)*2+1] = end >= end(size-1) ? end : end(size-1);
+		if(end>end(size-1)){
+			positions[(size-1)*2+1] = end;
+		} else {
+			positions[(size-1)*2+1] = end(size-1);
+		}
+		//positions[(size-1)*2+1] = max(end,end(size-1));
 	}
 
 
