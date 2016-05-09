@@ -42,7 +42,7 @@ public class PortionSet {
 	 *					PUBLIC METHODS
 	 * ////////////////////////////////////////////////////
 	 */
-	//@ requires n>=0 && n<Integer.MAX_VALUE;
+	//@ requires n>=0;
 	//@ requires size*2 <= positions.length;
 	/*@ ensures \result <==>
 	  @			(\exists int I; I>=0 && I<size; begin(I) <= n && n < end(I)); */
@@ -65,7 +65,7 @@ public class PortionSet {
 	}
 
 	//@ requires size>0 ==> begin>=begin(size-1);
-	//@ requires begin<end && end<=Integer.MAX_VALUE;
+	//@ requires begin<end;
 	//@ requires size<capacity; //TODO: add size==capacity
 	//@ requires 2*size<positions.length;
 
@@ -78,10 +78,22 @@ public class PortionSet {
 		if (size == 0) {
 			addInterval(begin, end);
 		} else {
-			if (begin <= end(size-1)){// && begin(size-1) <= end){
+			final int SIZE=size;
+			final int END=end(size-1);
+			//@ assert size==SIZE;
+			//@ assert 2*size<positions.length;
+			if (begin <= END){// && begin(size-1) <= end){
+				//@ assert begin<=END && begin(size-1) <= end;
 				updateLastInterval(begin, end);
-			} else {//if (begin > end(size-1)){
+				return;
+			}
+			//@ assert size==SIZE;
+			//@ assert 2*SIZE<positions.length;
+			//@ assert SIZE<capacity;
+			if (begin > END){
+				//@ assert begin>END && begin(size-1) <= end;
 				addInterval(begin, end);
+				return;
 			}
 		}
 	}
@@ -93,14 +105,16 @@ public class PortionSet {
 	 */
 	//@ requires size<capacity ;
 	//@ requires 2*size<positions.length;
-   //@ requires size>0 ==> begin>end(size-1);
-	//@ requires begin<end && end<=Integer.MAX_VALUE;
+   //@ requires size==0 || begin>end(size-1);
+	//@ requires begin<end;
 
-	//@ ensures size == \old(size)+1
+	//@ ensures size == \old(size)+1;
 	//@ ensures positions[\old(size)*2] == begin;
 	//@ ensures positions[\old(size)*2+1] == end;
 
-	//@ modifies size, positions[size*2+1], positions[size*2];
+	// @ modifies size;
+	// @ modifies positions[size*2];
+	// @ modifies positions[size*2+1];
 	private void addInterval(int begin, int end) {
 		positions[size*2] = begin;
 		positions[size*2+1] = end;
