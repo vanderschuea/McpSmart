@@ -1,4 +1,4 @@
-// Command lin : openjml -progress -esc -code-math java -spec-math safe PortionSet.java
+// Command line : openjml -progress -esc -code-math java -spec-math safe PortionSet.java
 public class PortionSet {
 
 	/**
