@@ -1,4 +1,4 @@
-
+// Command lin : openjml -progress -esc -code-math java -spec-math safe PortionSet.java
 public class PortionSet {
 
 	/**
@@ -64,7 +64,7 @@ public class PortionSet {
 	}
 
 	// 		Conditions on the arguments
-	//@ requires (size==0) || (size!=0 && begin>=begin(size-1) && begin<end && end<=Integer.MAX_VALUE);
+	//@ requires (size>0 ==> begin>=begin(size-1) && begin<end && end<=Integer.MAX_VALUE);
 	// 		Conditions on the state of class variables/invariants
 	// TODO: @ requires size<capacity;
 	public void add(int begin, int end) {
