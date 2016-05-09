@@ -16,7 +16,8 @@ public class PortionSet {
 	 *					CLASS INVARIANTS
 	 * ////////////////////////////////////////////////////
 	 */
-	// TODO
+	//@ public invariant size>=0;
+	//@ public invariant capacity>=0;
 
 	/**
 	 * ////////////////////////////////////////////////////
