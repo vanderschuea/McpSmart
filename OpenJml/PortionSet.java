@@ -85,7 +85,7 @@ public class PortionSet {
 	 *					PRIVATE METHODS
 	 * ////////////////////////////////////////////////////
 	 */
-    //@ requires begin >= 0 && begin < end && end <Integer.MAX_VALUE;
+    //@ requires (size>0==>begin>end(size-1))  && begin < end && end <Integer.MAX_VALUE;
 	//@ requires size< capacity;
 	//@ ensures size == \old(size)+1 && positions[\old(size)*2] == begin;
 	//@ ensures positions[\old(size)*2+1] == end;
