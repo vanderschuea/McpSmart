@@ -89,7 +89,6 @@ public class PortionSet {
 	//@ requires size< capacity;
 	//@ ensures size == \old(size)+1 && positions[\old(size)*2] == begin;
 	//@ ensures positions[\old(size)*2+1] == end;
-	
 	private void addInterval(int begin, int end) {
 		positions[size*2] = begin;
 		positions[size*2+1] = end;
