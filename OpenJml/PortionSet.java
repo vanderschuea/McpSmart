@@ -56,25 +56,34 @@ public class PortionSet {
 		while (!result && i < size) {
 			if (begin(i) <= n && n < end(i)) {
 				result = true;
-				break;
+				//break;
 			}
 			i=i+1;
 		}
 		return result;
 	}
 
-	// 		Conditions on the arguments
-	//@ requires (size>0 ==> begin>=begin(size-1) && begin<end && end<=Integer.MAX_VALUE);
-	// 		Conditions on the state of class variables/invariants
-	// TODO: @ requires size<capacity;
+	//@ requires size>0 ==> begin>=begin(size-1);
+	//@ requires begin<end && end<=Integer.MAX_VALUE;
+	//@ requires size<capacity;
+	
+	//@ ensures \old(size)==0 ==> (positions[0]==begin && positions[1]==end && size==1);
+	/*  @ ensures (\old(size)>0 && begin<=end(\old(size)-1) && begin(\old(size)-1)<=end) 
+	  	  		 ==> (positions[begin(\old(size)-1)]==begin(\old(size)-1)
+	   							 && positions[end(\old(size)-1)]==end);*/
+	
+	//@ modifies size;
 	public void add(int begin, int end) {
 		if (size == 0) {
+			//@ assert size==0;
 			addInterval(begin, end);
 		} else {
-			if (begin <= end(size-1) && begin(size-1) <= end){
-                //  @ assert begin <= end(size-1) && begin(size-1) <= end; // OpenJML en aura besoin...
+			//@assert size>0;
+			if (begin <= end(size-1)){// && begin(size-1) <= end){
+                //@ assert begin <= end(size-1) && begin(size-1) <= end && size>0 && begin<end;
 				updateLastInterval(begin, end);
 			} else {
+				//@ assert begin>end(size-1) && begin>=begin(size-1) && size>0 && begin<end;
 				addInterval(begin, end);
 			}
 		}
@@ -85,7 +94,7 @@ public class PortionSet {
 	 *					PRIVATE METHODS
 	 * ////////////////////////////////////////////////////
 	 */
-    //@ requires (size>0==>begin>end(size-1))  && begin < end && end <Integer.MAX_VALUE;
+    //@ requires (size>0==>begin>end(size-1))  && begin<end && end<=Integer.MAX_VALUE;
 	//@ requires size< capacity;
 	//@ ensures size == \old(size)+1 && positions[\old(size)*2] == begin;
 	//@ ensures positions[\old(size)*2+1] == end;
