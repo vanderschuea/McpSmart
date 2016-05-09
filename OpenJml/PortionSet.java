@@ -105,7 +105,6 @@ public class PortionSet {
 		} else {
 			positions[(size-1)*2+1] = end(size-1);
 		}
-		//positions[(size-1)*2+1] = max(end,end(size-1));
 	}
 
 
