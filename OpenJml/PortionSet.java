@@ -17,7 +17,8 @@ public class PortionSet {
 	 * ////////////////////////////////////////////////////
 	 */
 	//@ public invariant size>=0 && size<=capacity;
-	//@ public invariant capacity>=0 && 2*capacity==positions.length;
+	//@ public invariant capacity>0 && 2*capacity==positions.length;
+	//@ public invariant positions.length>0;
 	//@ public invariant (\forall int i; i>=0 && i<2*size-1; positions[i]<positions[i+1]);
 
 	/**
@@ -65,25 +66,21 @@ public class PortionSet {
 
 	//@ requires size>0 ==> begin>=begin(size-1);
 	//@ requires begin<end && end<=Integer.MAX_VALUE;
-	//@ requires size<capacity;
-	
-	//@ ensures \old(size)==0 ==> (positions[0]==begin && positions[1]==end && size==1);
-	/*  @ ensures (\old(size)>0 && begin<=end(\old(size)-1) && begin(\old(size)-1)<=end) 
+	//@ requires size<capacity; //TODO: add size==capacity
+	//@ requires 2*size<positions.length;
+
+	// @ ensures \old(size)==0 ==> (positions[0]==begin && positions[1]==end && size==1);
+	/*  @ ensures (\old(size)>0 && begin<=end(\old(size)-1) && begin(\old(size)-1)<=end)
 	  	  		 ==> (positions[begin(\old(size)-1)]==begin(\old(size)-1)
 	   							 && positions[end(\old(size)-1)]==end);*/
-	
-	//@ modifies size;
-	public void add(int begin, int end) {
+
+	public void add(final int begin, final int end) {
 		if (size == 0) {
-			//@ assert size==0;
 			addInterval(begin, end);
 		} else {
-			//@assert size>0;
 			if (begin <= end(size-1)){// && begin(size-1) <= end){
-                //@ assert begin <= end(size-1) && begin(size-1) <= end && size>0 && begin<end;
 				updateLastInterval(begin, end);
-			} else {
-				//@ assert begin>end(size-1) && begin>=begin(size-1) && size>0 && begin<end;
+			} else {//if (begin > end(size-1)){
 				addInterval(begin, end);
 			}
 		}
@@ -94,22 +91,32 @@ public class PortionSet {
 	 *					PRIVATE METHODS
 	 * ////////////////////////////////////////////////////
 	 */
-    //@ requires (size>0==>begin>end(size-1))  && begin<end && end<=Integer.MAX_VALUE;
-	//@ requires size< capacity;
-	//@ ensures size == \old(size)+1 && positions[\old(size)*2] == begin;
+	//@ requires size<capacity ;
+	//@ requires 2*size<positions.length;
+   //@ requires size>0 ==> begin>end(size-1);
+	//@ requires begin<end && end<=Integer.MAX_VALUE;
+
+	//@ ensures size == \old(size)+1
+	//@ ensures positions[\old(size)*2] == begin;
 	//@ ensures positions[\old(size)*2+1] == end;
+
+	//@ modifies size, positions[size*2+1], positions[size*2];
 	private void addInterval(int begin, int end) {
 		positions[size*2] = begin;
 		positions[size*2+1] = end;
 		size++;
 	}
-	
+
 	//@ requires size>0 && size<=capacity;
-	//@ requires begin(size-1)<=begin && begin<=end(size-1) && begin(size-1)<end;
+	//@ requires begin(size-1)<=begin;
+	//@ requires begin<=end(size-1);
+	//@ requires begin(size-1)<end;
+
 	/*@ ensures  end>=end(size-1)<==>positions[(size-1)*2+1]==end &&
-				 end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1) && 
-				 (positions[(size-1)*2+1]==end(size-1) || 
+				 end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1) &&
+				 (positions[(size-1)*2+1]==end(size-1) ||
 				  	positions[(size-1)*2+1]==end);*/
+
 	//@ modifies positions[(size-1)*2+1];
 	private void updateLastInterval(int begin, int end) {
 		if(end>end(size-1)){
