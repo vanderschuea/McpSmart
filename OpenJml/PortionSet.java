@@ -105,7 +105,7 @@ public class PortionSet {
 	 */
 	//@ requires size<capacity ;
 	//@ requires 2*size<positions.length;
-   //@ requires size==0 || begin>end(size-1);
+   //@ requires size==0 || (begin>positions[(size-1)*2+1]);
 	//@ requires begin<end;
 
 	//@ ensures size == \old(size)+1;
