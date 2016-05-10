@@ -26,14 +26,13 @@ public class PortionSet {
 	 *					CONSTRUCTOR
 	 * ////////////////////////////////////////////////////
 	 */
-	//@ requires max>0 && max<Integer.MAX_VALUE/2;
+	//@ requires max>0;
 	//@ ensures size==0 && positions.length==max*2 && capacity==max;
 	//@ modifies positions, size, capacity;
 	public PortionSet(int max) {
 		positions = new int[max*2];
 		capacity = max;
 		size = 0;
-		// TODO: set class invariants too
 	}
 
 
@@ -42,6 +41,9 @@ public class PortionSet {
 	 *					PUBLIC METHODS
 	 * ////////////////////////////////////////////////////
 	 */
+	// The solver crashes sometimes while trying to prove this method,
+	//    relaunching it should solve the problem.
+	
 	//@ requires n>=0;
 	//@ requires size*2 <= positions.length;
 	/*@ ensures \result <==>
@@ -57,43 +59,35 @@ public class PortionSet {
 		while (!result && i < size) {
 			if (begin(i) <= n && n < end(i)) {
 				result = true;
-				//break;
 			}
 			i=i+1;
 		}
 		return result;
 	}
 
-	//@ requires size>0 ==> begin>=begin(size-1);
 	//@ requires begin<end;
-	//@ requires size<capacity; //TODO: add size==capacity
-	//@ requires 2*size<positions.length;
+	//@ requires size>0 ==> begin>=begin(size-1);
+	//@ requires size==capacity ==> begin<=end(size-1);
 
-	// @ ensures \old(size)==0 ==> (positions[0]==begin && positions[1]==end && size==1);
-	/*  @ ensures (\old(size)>0 && begin<=end(\old(size)-1) && begin(\old(size)-1)<=end)
-	  	  		 ==> (positions[begin(\old(size)-1)]==begin(\old(size)-1)
-	   							 && positions[end(\old(size)-1)]==end);*/
-
+	//@ ensures \old(size)==0 ==> (positions[0]==begin && positions[1]==end && size==1);
+	/*@ ensures ( \old(size)==size && end<=end(size-1) )
+	  	  		 ==> (end>=end(size-1)<==>positions[(size-1)*2+1]==end &&
+					  end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1));*/
+	/*@ ensures (\old(size)==size) 
+	  			 ==> positions[size-1]==\old(positions[size-1]);*/
+	/*@ ensures ( \old(size)>0 && begin>end(size-1))
+				 ==> (size == \old(size)+1 &&
+					  positions[\old(size)*2] == begin &&
+					  positions[\old(size)*2+1] == end);*/
 	public void add(final int begin, final int end) {
 		if (size == 0) {
 			addInterval(begin, end);
 		} else {
-			final int SIZE=size;
-			final int END=end(size-1);
-			//@ assert size==SIZE;
-			//@ assert 2*size<positions.length;
-			if (begin <= END){// && begin(size-1) <= end){
-				//@ assert begin<=END && begin(size-1) <= end;
+			if (begin <= end(size-1)){// && begin(size-1) <= end){
 				updateLastInterval(begin, end);
-				return;
-			}
-			//@ assert size==SIZE;
-			//@ assert 2*SIZE<positions.length;
-			//@ assert SIZE<capacity;
-			if (begin > END){
-				//@ assert begin>END && begin(size-1) <= end;
+				
+			} else {
 				addInterval(begin, end);
-				return;
 			}
 		}
 	}
@@ -103,33 +97,26 @@ public class PortionSet {
 	 *					PRIVATE METHODS
 	 * ////////////////////////////////////////////////////
 	 */
-	//@ requires size<capacity ;
-	//@ requires 2*size<positions.length;
-   //@ requires size==0 || (begin>positions[(size-1)*2+1]);
 	//@ requires begin<end;
+	//@ requires size<capacity;
+    //@ requires size>0 ==> (begin>positions[(size-1)*2+1]);
 
 	//@ ensures size == \old(size)+1;
 	//@ ensures positions[\old(size)*2] == begin;
 	//@ ensures positions[\old(size)*2+1] == end;
-
-	// @ modifies size;
-	// @ modifies positions[size*2];
-	// @ modifies positions[size*2+1];
 	private void addInterval(int begin, int end) {
 		positions[size*2] = begin;
 		positions[size*2+1] = end;
-		size++;
+		size=size+1;
 	}
 
-	//@ requires size>0 && size<=capacity;
+	//@ requires size>0;
 	//@ requires begin(size-1)<=begin;
 	//@ requires begin<=end(size-1);
 	//@ requires begin(size-1)<end;
 
-	/*@ ensures  end>=end(size-1)<==>positions[(size-1)*2+1]==end &&
-				 end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1) &&
-				 (positions[(size-1)*2+1]==end(size-1) ||
-				  	positions[(size-1)*2+1]==end);*/
+	//@ ensures  end>=end(size-1)<==>positions[(size-1)*2+1]==end;
+	//@ ensures	 end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1);
 
 	//@ modifies positions[(size-1)*2+1];
 	private void updateLastInterval(int begin, int end) {
