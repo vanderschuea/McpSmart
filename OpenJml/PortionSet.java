@@ -3,7 +3,7 @@ public class PortionSet {
 
 	/**
 	 * ////////////////////////////////////////////////////
-	 *					CLASS FIELDS
+	 *			CLASS FIELDS
 	 * ////////////////////////////////////////////////////
 	 */
 	private /*@spec_public@*/ int[] positions;
@@ -12,7 +12,7 @@ public class PortionSet {
 
 	/**
 	 * Description:
-	 *		Nous avons ici a chaque fois impose qu'une portion etait definie par
+	 *    Nous avons ici a chaque fois impose qu'une portion etait definie par
 	 *    [begin,end[. Par ailleurs si 'add' est appele il s'agit d'une portion
 	 *    dont le 1er indice vient apres (/est egale à) celui de portion
 	 *    precedente.
@@ -21,7 +21,7 @@ public class PortionSet {
 
 	/**
 	 * ////////////////////////////////////////////////////
-	 *					CLASS INVARIANTS
+	 *			CLASS INVARIANTS
 	 * ////////////////////////////////////////////////////
 	 */
 
@@ -40,7 +40,7 @@ public class PortionSet {
 
 	/**
 	 * ////////////////////////////////////////////////////
-	 *					CONSTRUCTOR
+	 *			CONSTRUCTOR
 	 * ////////////////////////////////////////////////////
 	 */
 
@@ -60,7 +60,7 @@ public class PortionSet {
 
 	/**
 	 * ////////////////////////////////////////////////////
-	 *					PUBLIC METHODS
+	 *			PUBLIC METHODS
 	 * ////////////////////////////////////////////////////
 	 */
 	// The solver crashes sometimes while trying to prove this method,
@@ -74,7 +74,7 @@ public class PortionSet {
 	//@ requires n>0;
 
 	/*@ ensures \result <==>
-	  @			(\exists int I; I>=0 && I<size; begin(I) <= n && n < end(I)); */
+	  	(\exists int I; I>=0 && I<size; begin(I) <= n && n < end(I)); */
 
 	//@ pure;
 	public boolean contains(int n) {
@@ -95,16 +95,16 @@ public class PortionSet {
 
 	/**
 	 * @Pre:  - Les conditions pour satisfaire la def. d'une portion
-	 *			 - Satisfaire la condition qu'un intervalle ne peut pas se trouver
-	 *					avant un autre.
-	 *			 - Si un intervalle n'a pas d'elements en commun avec le precedent,
-	 *					il ne peut etre ajoute que si le vecteur positions n'est pas
-	 *					deja rempli.
+	 *	  - Satisfaire la condition qu'un intervalle ne peut pas se trouver
+	 *		avant un autre.
+	 *	  - Si un intervalle n'a pas d'elements en commun avec le precedent,
+	 *		il ne peut etre ajoute que si le vecteur positions n'est pas
+	 *		deja rempli.
 	 *
 	 * @Post: S'il s'agit du 1er intervalle ou d'un interval disjoint, il a ete ajoute.
-	 *			 S'il s'agit d'un intervalle qui chevauche l'intervalle precedent,
-	 *				cellui-ci a ete modifie en consequence pour refleter un eventuel
-	 * 			aggrandissement, afin de comprendre tous les elements des 2 portions.
+	 *	  S'il s'agit d'un intervalle qui chevauche l'intervalle precedent,
+	 *		cellui-ci a ete modifie en consequence pour refleter un eventuel
+	 * 		aggrandissement, afin de comprendre tous les elements des 2 portions.
 	 */
 
 	//@ requires begin<end && begin>=0;
@@ -114,7 +114,8 @@ public class PortionSet {
 	//@ ensures \old(size)==0 ==> (positions[0]==begin && positions[1]==end && size==1);
 	/*@ ensures ( \old(size)==size && end<=end(size-1) )
 	  	  		 ==> (end>=end(size-1)<==>positions[(size-1)*2+1]==end &&
-					  end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1));*/
+				      end<=\old(positions[(size-1)*2+1])<==>
+						positions[(size-1)*2+1]==\old(positions[(size-1)*2+1]));*/
 	/*@ ensures (\old(size)==size)
 	  			 ==> positions[size-1]==\old(positions[size-1]);*/
 	/*@ ensures ( \old(size)>0 && begin>end(size-1))
@@ -136,14 +137,14 @@ public class PortionSet {
 
 	/**
 	 * ////////////////////////////////////////////////////
-	 *					PRIVATE METHODS
+	 *			PRIVATE METHODS
 	 * ////////////////////////////////////////////////////
 	 */
 
 	/**
 	 * @Pre:  - La definition d'une portion
-	 *			 - Vu qu'on ajoute un element, il faut qu'il reste une place de libre
-	 * 		 - L'intervalle ajoute doit etre disjoint
+	 *	  - Vu qu'on ajoute un element, il faut qu'il reste une place de libre
+	 *	  - L'intervalle ajoute doit etre disjoint
 	 *
 	 * @Post: La taille a ete augmentee car l'intervalle a ete ajoute.
 	 */
@@ -152,11 +153,13 @@ public class PortionSet {
 	//@ requires begin<end;
 	//@ requires size==0 ==> begin>=0;
 	//@ requires size<capacity;
-   //@ requires size>0  ==> (begin>positions[(size-1)*2+1]);
+	//@ requires size>0  ==> (begin>positions[(size-1)*2+1]);
 
 	//@ ensures size == \old(size)+1;
 	//@ ensures positions[\old(size)*2] == begin;
 	//@ ensures positions[\old(size)*2+1] == end;
+	
+	// @ modifies positions[size*2], positions[size*2+1], size;
 	private void addInterval(int begin, int end) {
 		positions[size*2] = begin;
 		positions[size*2+1] = end;
@@ -176,9 +179,9 @@ public class PortionSet {
 	//@ requires begin<end;
 	//@ requires begin(size-1)<=begin;
 	//@ requires begin<=end(size-1);
-
-	//@ ensures  end>=end(size-1)<==>positions[(size-1)*2+1]==end;
-	//@ ensures	 end<=end(size-1)<==>positions[(size-1)*2+1]==end(size-1);
+	
+	//@ ensures end>=\old(positions[(size-1)*2+1])<==>positions[(size-1)*2+1]==end;
+	//@ ensures end<=\old(positions[(size-1)*2+1])<==>positions[(size-1)*2+1]==\old(positions[(size-1)*2+1]);
 
 	//@ modifies positions[(size-1)*2+1];
 	private void updateLastInterval(int begin, int end) {
@@ -193,7 +196,7 @@ public class PortionSet {
 
 	/**
 	 * ////////////////////////////////////////////////////
-	 *					GIVEN PROOFS
+	 *			GIVEN PROOFS
 	 * ////////////////////////////////////////////////////
 	 */
 
